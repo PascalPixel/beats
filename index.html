@@ -1,0 +1,120 @@
+<!doctype html>
+<html>
+  <head>
+    <style type="text/css">
+      body {
+        background: black;
+        color: white;
+        font-family: sans-serif;
+        text-align: center;
+        padding: 5rem;
+      }
+      svg {
+        display: block;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+      }
+    </style>
+    <script>
+      function startDecimalTime() {
+
+        // Make decimal hour indicators
+        for(var i = 1; i <= 24; i++) {
+          var el = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+          el.setAttribute('x1', '100');
+          el.setAttribute('y1', '30');
+          el.setAttribute('x2', '100');
+          el.setAttribute('y2', '40');
+          el.setAttribute('transform', 'rotate(' + (i*360/24) + ' 100 100)');
+          el.setAttribute('style', 'stroke-width: 2px; stroke: #333;');
+          document.querySelector('svg .back').appendChild(el);
+        }
+
+        // Make regular hour indicators
+        for(var i = 1; i <= 10; i++) {
+          var el = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+          el.setAttribute('x1', '100');
+          el.setAttribute('y1', '30');
+          el.setAttribute('x2', '100');
+          el.setAttribute('y2', '40');
+          el.setAttribute('transform', 'rotate(' + (i*360/10) + ' 100 100)');
+          el.setAttribute('style', 'stroke-width: 2px; stroke: #ffffff;');
+          document.querySelector('svg .back').appendChild(el);
+        }
+
+        // Seconds in a day
+        var decimalSeconds = 100000;
+        var regularSeconds =  86400;
+
+        // regular milliseconds to decimal seconds converter
+        function msToDs (s) {
+          return Math.floor((s / 1000) * (decimalSeconds / regularSeconds));
+        }
+
+        // Seconds since midnight
+        var d = new Date();
+        var sinceMidnight = msToDs((new Date(d)) - d.setHours(0,0,0));
+
+        // Split string
+        var string = (sinceMidnight).toString();
+        var array = ('0' + string).match(/.{2}/g).map(Number);
+
+        // Starting angles of hands
+        var hoursAngle  = (360 /  10) * array[0];
+        var minuteAngle = (360 / 100) * array[1];
+        var secAngle    = (360 / 100) * array[2];
+
+        // Get hands
+        var hands = [
+          document.querySelector('#secondhand > *'),
+          document.querySelector('#minutehand > *'),
+          document.querySelector('#hourhand > *')
+        ];
+
+        // Set positions of hands
+        hands[0].setAttribute('from', (secAngle)+' 100 100');
+        hands[0].setAttribute('to', (secAngle + 360)+' 100 100');
+
+        hands[1].setAttribute('from', (minuteAngle)+' 100 100');
+        hands[1].setAttribute('to', (minuteAngle + 360)+' 100 100');
+
+        hands[2].setAttribute('from', (hoursAngle)+' 100 100');
+        hands[2].setAttribute('to', (hoursAngle + 360)+' 100 100');
+      }
+    </script>
+  </head>
+  <body onLoad='startDecimalTime()'>
+    <span>Decimal Clock</span>
+    <svg width="200" height="200">
+      <g class='back'>
+        <circle id="circle" style="fill:black" cx="100" cy="100" r="80"></circle>
+      </g>
+      <g>
+        <line x1="100" y1="100" x2="100" y2="55" style="stroke-width: 4px; stroke: #fff;" id="hourhand">
+          <animatetransform attributeName="transform"
+            attributeType="XML"
+            type="rotate"
+            dur="86400000ms"
+            repeatCount="indefinite"/>
+        </line>
+        <line x1="100" y1="100" x2="100" y2="40" style="stroke-width: 3px; stroke: #fff;" id="minutehand">
+          <animatetransform attributeName="transform"
+            attributeType="XML"
+            type="rotate"
+            dur="8640000ms"
+            repeatCount="indefinite"/>
+        </line>
+        <line x1="100" y1="100" x2="100" y2="30" style="stroke-width: 2px; stroke: #FCE600;" id="secondhand">
+          <animatetransform attributeName="transform"
+            attributeType="XML"
+            type="rotate"
+            dur="86400ms"
+            repeatCount="indefinite"/>
+        </line>
+      </g>
+      <circle id="center" style="fill:#FCE600; stroke: #FCE600; stroke-width: 2px;" cx="100" cy="100" r="5"></circle>
+    </svg>
+  </body>
+</html>
